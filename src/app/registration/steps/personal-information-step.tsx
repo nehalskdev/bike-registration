@@ -20,8 +20,8 @@ import { Checkbox } from "@/src/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
 import DatePicker from "@/src/components/ui/date-picker";
 
-import { BikeRegistrationFormData } from "../model/schema";
-import { COUNTRIES, LANGUAGES, GENDERS } from "../model/constants";
+import { BikeRegistrationFormData } from "../schemas/registration-schema";
+import { COUNTRIES, LANGUAGES, GENDERS } from "../constants/form-options";
 
 const TextField = memo(
   ({
@@ -186,27 +186,23 @@ const CheckboxField = memo(
 CheckboxField.displayName = "CheckboxField";
 
 /**
- * Step 3 of registration form - Collects user's personal information
- * Includes validation and required field markers
+ * Step 3: Personal Information
+ * Collects user's personal and contact information
  */
-const PersonalInformation = (): React.JSX.Element => {
+const PersonalInformationStep = (): React.JSX.Element => {
   const { control } = useFormContext<BikeRegistrationFormData>();
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4">
-        <TextField
-          name="firstName"
-          label="First Name"
-          placeholder="First Name"
-        />
+        <TextField name="firstName" label="First Name" placeholder="John" />
 
-        <TextField name="lastName" label="Last Name" placeholder="Last Name" />
+        <TextField name="lastName" label="Last Name" placeholder="Doe" />
 
         <TextField
           name="email"
           label="Email"
           type="email"
-          placeholder="Email"
+          placeholder="john@example.com"
         />
 
         <SelectField
@@ -248,4 +244,4 @@ const PersonalInformation = (): React.JSX.Element => {
   );
 };
 
-export default memo(PersonalInformation);
+export default memo(PersonalInformationStep);

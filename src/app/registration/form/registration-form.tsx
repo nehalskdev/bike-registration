@@ -15,59 +15,72 @@ import {
 import { Button } from "@/src/components/ui/button";
 
 import {
-  bikeRegisterationInitialData,
+  bikeRegistrationInitialData,
   BikeRegistrationFormData,
   bikeRegistrationSchema,
-} from "../model/schema";
+} from "../schemas/registration-schema";
 import {
   registerBike,
   BikeRegistrationError,
-} from "../services/bikeRegisterationApi";
-import RegisterSerialNumber from "./registerSerialNumber";
-import BikeInformation from "./bikeInformation";
-import PersonalInformation from "./personalInformation";
-import RegisterationConfirmation from "./registerationConfirmation";
-import BikeInfoCard from "./bikeInfoCard";
+} from "../services/bike-registration";
+import SerialNumberStep from "../steps/serial-number-step";
+import BikeInformationStep from "../steps/bike-information-step";
+import PersonalInformationStep from "../steps/personal-information-step";
+import ConfirmationStep from "../steps/confirmation-step";
+import BikeInfoCard from "./bike-info-card";
 
 /**
  * Main bike registration form component
- * Manages multi-step form process and submission
+ * Orchestrates multi-step registration process
  */
-const BikeRegistrationForm = (): React.JSX.Element => {
+const RegistrationForm = (): React.JSX.Element => {
   const [confirmation, setConfirmation] = useState({
     success: false,
     message: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize form with validation schema and default values
+  // Initialize form
   const form = useForm<BikeRegistrationFormData>({
     resolver: zodResolver(bikeRegistrationSchema),
-    defaultValues: bikeRegisterationInitialData,
+    defaultValues: bikeRegistrationInitialData,
     mode: "onChange",
   });
 
   const { setStepCompleted, nextStep, prevStep } = useStepper();
 
-  // Form submission handler
-  const submitHandler = useCallback<SubmitHandler<BikeRegistrationFormData>>(
+  /**
+   * Handles form submission
+   */
+  const handleSubmit = useCallback<SubmitHandler<BikeRegistrationFormData>>(
     async (data) => {
       try {
         setIsLoading(true);
-        const isValidData = bikeRegistrationSchema.safeParse(data).success;
-        if (!isValidData) {
+
+        // Validate data
+        const validationResult = bikeRegistrationSchema.safeParse(data);
+        if (!validationResult.success) {
           return;
         }
 
-        const res = await registerBike(data);
-        setConfirmation({ success: res.success, message: res.message });
+        // Submit registration
+        const response = await registerBike(data);
+        setConfirmation({
+          success: response.success,
+          message: response.message,
+        });
       } catch (error) {
-        console.error(error);
+        console.error("Registration error:", error);
+
         const errorMessage =
           error instanceof Object && "message" in error
             ? (error as BikeRegistrationError).message
-            : "Registration failed";
-        setConfirmation({ success: false, message: errorMessage });
+            : "Registration failed. Please try again.";
+
+        setConfirmation({
+          success: false,
+          message: errorMessage,
+        });
       } finally {
         setIsLoading(false);
         setStepCompleted(2, true);
@@ -77,10 +90,12 @@ const BikeRegistrationForm = (): React.JSX.Element => {
     [setStepCompleted, nextStep],
   );
 
-  // Navigation buttons for personal information step
+  /**
+   * Render navigation buttons for personal information step
+   */
   const NavigationButtons = useMemo(
     () => (
-      <div className="mt-4 flex justify-end">
+      <div className="mt-4 flex justify-end gap-2">
         <Button
           size="lg"
           variant="link"
@@ -108,46 +123,59 @@ const BikeRegistrationForm = (): React.JSX.Element => {
     [prevStep, form.formState.isValid, isLoading],
   );
 
-  // Step labels for stepper indicator
-  const Labels = useMemo(
+  /**
+   * Step configuration
+   */
+  const steps = useMemo(
     () => [
-      "Serial number",
-      "Bike information",
-      "Personal information",
-      "Registration confirmation",
+      {
+        title: "Serial number",
+        component: <SerialNumberStep />,
+        showBikeCard: false,
+      },
+      {
+        title: "Bike information",
+        component: <BikeInformationStep />,
+        showBikeCard: false,
+      },
+      {
+        title: "Personal information",
+        component: <PersonalInformationStep />,
+        showBikeCard: true,
+      },
+      {
+        title: "Registration confirmation",
+        component: (
+          <ConfirmationStep
+            message={confirmation.message}
+            success={confirmation.success}
+          />
+        ),
+        showBikeCard: false,
+      },
     ],
-    [],
+    [confirmation],
   );
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(submitHandler)}>
-        <StepperIndicators labels={Labels} />
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <StepperIndicators labels={steps.map((s) => s.title)} />
 
-        {Labels.map((title, index) => (
+        {steps.map((step, index) => (
           <Step key={index} index={index}>
-            {index === 2 && <BikeInfoCard imageSize={150} />}
+            {step.showBikeCard && <BikeInfoCard imageSize={150} />}
+
             <StepTitle
               className="text-2xl text-neutral-500 md:text-3xl font-brandon uppercase font-extrabold tracking-wider"
               stepNumber={index}
             >
-              {title}
+              {step.title}
             </StepTitle>
+
             <StepContent>
-              {index === 0 && <RegisterSerialNumber />}
-              {index === 1 && <BikeInformation />}
-              {index === 2 && (
-                <>
-                  <PersonalInformation />
-                  {NavigationButtons}
-                </>
-              )}
-              {index === 3 && (
-                <RegisterationConfirmation
-                  message={confirmation.message}
-                  success={confirmation.success}
-                />
-              )}
+              {step.component}
+              {index === 2 && NavigationButtons}
             </StepContent>
           </Step>
         ))}
@@ -156,4 +184,4 @@ const BikeRegistrationForm = (): React.JSX.Element => {
   );
 };
 
-export default BikeRegistrationForm;
+export default RegistrationForm;

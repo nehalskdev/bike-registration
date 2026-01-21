@@ -1,4 +1,4 @@
-import { BikeModel } from "../model/types";
+import { BikeModel } from "../schemas/types";
 import { BASE_URL } from "@/src/lib/utils";
 
 export type SerialNumberRequest = { serialNumber: string };
@@ -16,7 +16,7 @@ export type SerialNumberError = {
  * Verifies bike serial number by calling the backend API
  * @param serialNumber - The bike serial number to verify
  * @returns Promise containing bike details or error
- * @throws SerialNumberError if the serial number is invalid
+ * @throws Error if the serial number is invalid
  */
 export async function verifySerialNumber(
   serialNumber: string,

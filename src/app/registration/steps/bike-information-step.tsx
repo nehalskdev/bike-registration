@@ -15,73 +15,74 @@ import {
 } from "@/src/components/ui/form";
 import DatePicker from "@/src/components/ui/date-picker";
 
-import { BikeRegistrationFormData } from "../model/schema";
-import BikeInfoCard from "./bikeInfoCard";
+import { BikeRegistrationFormData } from "../schemas/registration-schema";
+import BikeInfoCard from "../form/bike-info-card";
 
 /**
- * Step 2 of registration form - Displays bike information
- * Shows serial number, model details, and purchase date selection
+ * Step 2: Bike Information
+ * Displays verified bike details and allows selection of purchase date
  */
-const BikeInformation = (): React.JSX.Element => {
+const BikeInformationStep = (): React.JSX.Element => {
   const { control, watch } = useFormContext<BikeRegistrationFormData>();
   const { prevStep, nextStep, setStepCompleted } = useStepper();
-  const dop = watch("dateOfPurchase"); // Watch date of purchase for validation
+  const dateOfPurchase = watch("dateOfPurchase");
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4">
-        {/* Serial Number Field (Read-only) */}
+        {/* Serial Number - Read Only */}
         <FormField
           control={control}
           name="serialNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel aria-disabled="true">Serial Number</FormLabel>
+              <FormLabel>Serial Number</FormLabel>
               <FormControl>
-                <Input disabled placeholder="Enter first name!" {...field} />
+                <Input disabled {...field} />
               </FormControl>
               <FormMessage />
               <FormDescription className="text-green-500 text-xs items-center flex gap-1 font-bold">
                 <CircleCheck size={14} />
-                Serial Number found
+                Serial Number verified
               </FormDescription>
             </FormItem>
           )}
         />
 
-        {/* Bike Image and Basic Info */}
+        {/* Bike Image */}
         <BikeInfoCard imageSize={400} showDescription={false} />
 
-        {/* Model and Shop Details (Read-only) */}
+        {/* Model Description - Read Only */}
         <FormField
           control={control}
           name="modelDescription"
           render={({ field }) => (
             <FormItem>
-              <FormLabel aria-disabled="true">Model Description</FormLabel>
+              <FormLabel>Model Description</FormLabel>
               <FormControl>
-                <Input disabled placeholder="Enter first name!" {...field} />
+                <Input disabled {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* Shop Name - Read Only */}
         <FormField
           control={control}
           name="shopName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel aria-disabled="true">Shop Name</FormLabel>
+              <FormLabel>Shop Name</FormLabel>
               <FormControl>
-                <Input disabled placeholder="Enter first name!" {...field} />
+                <Input disabled {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Date of Purchase Selection */}
+        {/* Date of Purchase */}
         <FormField
           control={control}
           name="dateOfPurchase"
@@ -91,10 +92,10 @@ const BikeInformation = (): React.JSX.Element => {
         />
       </div>
 
-      {/* Navigation Buttons */}
+      {/* Navigation */}
       <div className="flex justify-end gap-4 mt-4">
         <Button
-          variant={"link"}
+          variant="link"
           type="button"
           onClick={prevStep}
           className="text-blue-600 text-sm"
@@ -103,14 +104,14 @@ const BikeInformation = (): React.JSX.Element => {
         </Button>
 
         <Button
-          disabled={!dop} // Disable if date not selected
+          disabled={!dateOfPurchase}
           type="button"
-          size={"lg"}
+          size="lg"
           onClick={() => {
             setStepCompleted(1, true);
             nextStep();
           }}
-          variant={"default"}
+          variant="default"
         >
           Next
         </Button>
@@ -119,4 +120,4 @@ const BikeInformation = (): React.JSX.Element => {
   );
 };
 
-export default BikeInformation;
+export default BikeInformationStep;

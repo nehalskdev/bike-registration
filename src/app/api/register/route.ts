@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { bikeRegistrationSchema } from "@/app/registeration/model/schema";
+import { bikeRegistrationSchema } from "@/src/app/registration/schemas/registration-schema";
 
 // Helper function to fake delay from loading data from db
 const delay = (ms: number): Promise<unknown> =>
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       // return validation errors (zod format is helpful for FE)
       return NextResponse.json(
         { success: false, errors: result.error.format() },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           message:
             "Registration failed (simulated). Please contact our Support.",
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           "Your bike has been successfully registered. You will receive a confirmation email shortly.",
         payload: { serialNumber: data.serialNumber, email: data.email },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Invalid Request";

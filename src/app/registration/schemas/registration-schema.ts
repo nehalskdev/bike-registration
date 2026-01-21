@@ -1,6 +1,6 @@
 import z from "zod";
 
-const dataValidations = (message: string): z.ZodPipe =>
+const dateValidation = (message: string): z.ZodPipe =>
   z.preprocess(
     (arg) => {
       if (arg === undefined || arg === null) {
@@ -30,12 +30,12 @@ export const bikeRegistrationSchema = z.object({
   lastName: z.string().min(1, { message: "Last name is required" }),
   email: z.email({ message: "Invalid email address" }),
   country: z.string().min(1, { message: "Country is required" }),
-  dateOfPurchase: dataValidations("Date of purchase is required"),
+  dateOfPurchase: dateValidation("Date of purchase is required"),
   preferredLanguage: z
     .string()
     .min(1, { message: "At least one language must be selected" }),
   gender: z.string().min(1, { message: "Gender selection is required" }),
-  dateOfBirth: dataValidations("Date of birth is required"),
+  dateOfBirth: dateValidation("Date of birth is required"),
   newsOptIn: z.boolean(),
   consent: z.boolean().refine((val) => val === true, {
     message: "You must provide consent to continue",
@@ -44,7 +44,7 @@ export const bikeRegistrationSchema = z.object({
 
 export type BikeRegistrationFormData = z.infer<typeof bikeRegistrationSchema>;
 
-export const bikeRegisterationInitialData: BikeRegistrationFormData = {
+export const bikeRegistrationInitialData: BikeRegistrationFormData = {
   serialNumber: "",
   consent: false,
   country: "",

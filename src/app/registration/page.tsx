@@ -2,8 +2,7 @@ import { JSX } from "react";
 import { Metadata } from "next";
 
 import { StepperProvider } from "@/src/components/ui/stepper";
-
-import BikeRegisterationForm from "./components/bikeRegisterationForm";
+import RegistrationForm from "./form/registration-form";
 
 export const metadata: Metadata = {
   title: "Bike Registration | SCOTT Sports",
@@ -27,6 +26,10 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
+/**
+ * Bike Registration Page
+ * Main entry point for the multi-step bike registration process
+ */
 const BikeRegistrationPage = (): JSX.Element => (
   <div className="mx-auto p-4 bg-white rounded-lg">
     <h1 className="text-3xl font-brandon md:text-5xl text-neutral-600 tracking-wider font-extrabold mb-12 text-center">
@@ -34,7 +37,7 @@ const BikeRegistrationPage = (): JSX.Element => (
     </h1>
 
     <StepperProvider isIndicatorButtonsAccessible={false} defaultStep={0}>
-      <BikeRegisterationForm />
+      <RegistrationForm />
     </StepperProvider>
   </div>
 );

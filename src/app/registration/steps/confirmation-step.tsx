@@ -3,23 +3,23 @@ import React from "react";
 
 import { cn } from "@/src/lib/utils";
 
-interface RegisterationConfirmationProps {
+interface ConfirmationStepProps {
   success: boolean;
   message: string;
 }
 
 /**
- * Final step of registration - Shows success/failure status
- * Uses appropriate icons and styling based on registration outcome
+ * Step 4: Registration Confirmation
+ * Displays success or failure status with appropriate messaging
  */
-const RegisterationConfirmation = ({
+const ConfirmationStep = ({
   message,
   success,
-}: RegisterationConfirmationProps): React.JSX.Element => (
+}: ConfirmationStepProps): React.JSX.Element => (
   <div className="text-center py-10">
     <div
       className={cn(
-        "w-24 h-24  rounded-full flex items-center justify-center mx-auto mb-4",
+        "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4",
         success ? "bg-green-100" : "bg-red-100",
       )}
     >
@@ -30,10 +30,10 @@ const RegisterationConfirmation = ({
       )}
     </div>
     <h2 className="text-2xl font-bold mb-2">
-      {success ? " Registration Complete!" : " Registration Failed!"}
+      {success ? "Registration Complete!" : "Registration Failed!"}
     </h2>
     <p className="text-gray-600">{message}</p>
   </div>
 );
 
-export default RegisterationConfirmation;
+export default ConfirmationStep;

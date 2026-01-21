@@ -1,4 +1,4 @@
-import { type BikeRegistrationFormData } from "../model/schema";
+import { type BikeRegistrationFormData } from "../schemas/registration-schema";
 import { BASE_URL } from "@/src/lib/utils";
 
 export type BikeRegistrationResponse = {

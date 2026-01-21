@@ -16,44 +16,42 @@ import { useStepper } from "@/src/components/ui/stepper";
 
 import {
   BikeRegistrationFormData,
-  bikeRegisterationInitialData,
-} from "../model/schema";
-import { verifySerialNumber } from "../services/serialNumberApi";
+  bikeRegistrationInitialData,
+} from "../schemas/registration-schema";
+import { verifySerialNumber } from "../services/bike-serial-verification";
 
 /**
- * First step of the bike registration process
- * Handles serial number verification before proceeding to bike information
+ * Step 1: Serial Number Verification
+ * Handles bike serial number verification and fetches bike details
  */
-const RegisterSerielNumber = (): JSX.Element => {
+const SerialNumberStep = (): JSX.Element => {
   const { setStepCompleted, nextStep } = useStepper();
   const { control, watch, setError, reset } =
     useFormContext<BikeRegistrationFormData>();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const sn = watch("serialNumber"); // Track serial number input value
-  const isDisabled = !sn || isLoading; // Disable button if no serial number or loading
+  const serialNumber = watch("serialNumber");
+  const isDisabled = !serialNumber || isLoading;
 
   /**
-   * Handles serial number verification
-   * On success: Populates form with bike data and proceeds to next step
-   * On error: Displays validation error message
+   * Verifies serial number and populates bike information
    */
-  const submithandler = async (): Promise<void> => {
+  const handleVerify = async (): Promise<void> => {
     try {
       setIsLoading(true);
-      const res = await verifySerialNumber(sn);
+      const response = await verifySerialNumber(serialNumber);
 
-      // Reset form with initial data plus verified bike information
-      reset({ ...bikeRegisterationInitialData, ...res.data });
+      // Populate form with bike details
+      reset({ ...bikeRegistrationInitialData, ...response.data });
 
       setStepCompleted(0, true);
-      nextStep(); // Proceed to bike information step
+      nextStep();
     } catch (err) {
       console.error(err);
       const errorMessage =
         err instanceof Error ? err.message : "Failed to verify serial number";
-      setError("serialNumber", { message: errorMessage }); // Show validation error
+      setError("serialNumber", { message: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +59,7 @@ const RegisterSerielNumber = (): JSX.Element => {
 
   return (
     <div className="flex flex-col space-y-4">
-      {/* Informational text about warranty extension */}
+      {/* Information section */}
       <p className="text-base tracking-wide mb-6">
         Register your bike to extend your warranty by 2 years, in addition to
         the 3-year standard coverage when compliant with our{" "}
@@ -71,7 +69,7 @@ const RegisterSerielNumber = (): JSX.Element => {
         Please visit our warranty policy page for more details.
       </p>
 
-      {/* Serial number input field */}
+      {/* Serial number input */}
       <FormField
         control={control}
         name="serialNumber"
@@ -83,18 +81,18 @@ const RegisterSerielNumber = (): JSX.Element => {
             <FormControl>
               <Input placeholder="Bike serial number" {...field} />
             </FormControl>
-            <FormMessage /> {/* Displays validation errors */}
+            <FormMessage />
           </FormItem>
         )}
       />
 
-      {/* Verification button with loading state */}
+      {/* Verification button */}
       <Button
         disabled={isDisabled}
-        size={"lg"}
+        size="lg"
         className="tracking-wider self-end min-w-40"
         type="button"
-        onClick={submithandler}
+        onClick={handleVerify}
       >
         {isLoading ? (
           <LoaderCircle size={40} className="animate-spin size-6 font-bold" />
@@ -103,7 +101,7 @@ const RegisterSerielNumber = (): JSX.Element => {
         )}
       </Button>
 
-      {/* Help links for locating serial number */}
+      {/* Help section */}
       <p className="text-base text-black mt-12">
         Where do I find my serial number on an{" "}
         <a href="#" className="text-blue-500 underline">
@@ -119,4 +117,4 @@ const RegisterSerielNumber = (): JSX.Element => {
   );
 };
 
-export default RegisterSerielNumber;
+export default SerialNumberStep;
