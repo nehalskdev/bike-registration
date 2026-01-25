@@ -31,14 +31,16 @@ export const metadata: Metadata = {
  * Main entry point for the multi-step bike registration process
  */
 const BikeRegistrationPage = (): JSX.Element => (
-  <div className="mx-auto p-4 bg-white rounded-lg">
-    <h1 className="text-3xl font-brandon md:text-5xl text-neutral-600 tracking-wider font-extrabold mb-12 text-center">
-      BIKE REGISTRATION
-    </h1>
+  <div className="min-h-screen bg-neutral-50 py-8">
+    <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 bg-white rounded-lg shadow-sm">
+      <h1 className="text-3xl font-brandon md:text-5xl text-neutral-600 tracking-wider font-extrabold mb-12 text-center pt-8">
+        BIKE REGISTRATION
+      </h1>
 
-    <StepperProvider isIndicatorButtonsAccessible={false} defaultStep={0}>
-      <RegistrationForm />
-    </StepperProvider>
+      <StepperProvider isIndicatorButtonsAccessible={false} defaultStep={0}>
+        <RegistrationForm />
+      </StepperProvider>
+    </div>
   </div>
 );
 
